@@ -5,5 +5,8 @@
         "utils",
         "i18n"
     ],
+    "rust-analyzer.linkedProjects": [
+        "./examples/cached_signal/Cargo.toml"
+    ],
     //"rust-analyzer.check.allTargets": true,
 }

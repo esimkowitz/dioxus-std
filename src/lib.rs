@@ -31,7 +31,7 @@ cfg_if::cfg_if! {
 }
 
 cfg_if::cfg_if! {
-    if #[cfg(feature = "cached_state")] {
-        pub mod cached_state;
+    if #[cfg(feature = "cached_signal")] {
+        pub mod cached_signal;
     }
 }

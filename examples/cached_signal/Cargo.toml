@@ -1,0 +1,20 @@
+[package]
+name = "cached_signal"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dioxus-std = { path="../../", features = ["cached_signal"] }
+dioxus = "0.4"
+dioxus-router = "0.4.0"
+dioxus-desktop = "0.4"
+dioxus-signals = { git = "https://github.com/DioxusLabs/dioxus.git", rev = "1ba6ca39e3f4d4fcd3b4e75e3a739d8c35514e5b", features = [
+    "serialize",
+] }
+strum_macros = "0.25.2"
+
+log = "0.4.6"
+
+# WebAssembly Debug
+wasm-logger = "0.2.0"
+console_error_panic_hook = "0.1.7"
