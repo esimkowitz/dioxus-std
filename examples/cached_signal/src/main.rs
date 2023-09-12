@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
-use dioxus_std::cached_signal::use_cached_signal;
+use dioxus_std::cached_states::use_cached_signal;
 use std::env;
 
 fn main() {
@@ -14,13 +14,14 @@ fn app(cx: Scope) -> Element {
     }
 }
 
+#[rustfmt::skip]
 #[derive(Clone, Debug, PartialEq, Routable)]
 enum Route {
     #[layout(Layout)]
-    #[route("/route1")]
-    Route1 {},
-    #[route("/route2")]
-    Route2 {},
+        #[route("/route1")]
+        Route1 {},
+        #[route("/route2")]
+        Route2 {},
     #[end_layout]
     #[route("/")]
     Index {},
@@ -28,9 +29,11 @@ enum Route {
 
 fn Layout(cx: Scope) -> Element {
     render! {
-        Link {
-            to: Route::Index {},
-            "Index"
+        p {
+            Link {
+                to: Route::Index {},
+                "Index"
+            }
         }
         Outlet::<Route> {}
     }
@@ -38,16 +41,17 @@ fn Layout(cx: Scope) -> Element {
 
 fn Index(cx: Scope) -> Element {
     render! {
-        div {
-            "Hello world"
+        p {
+            Link {
+                to: Route::Route1 {},
+                "Route1"
+            }
         }
-        Link {
-            to: Route::Route1 {},
-            "Route1"
-        }
-        Link {
-            to: Route::Route2 {},
-            "Route2"
+        p {
+            Link {
+                to: Route::Route2 {},
+                "Route2"
+            }
         }
     }
 }
@@ -58,13 +62,15 @@ fn Route1(cx: Scope) -> Element {
     render! {
         div {
             "Route1"
+        }
+        div {
             "{signal}"
         }
         button {
             onclick: move |_| {
                 *signal.write() += 1;
             },
-            "Increment"
+            "Increment1"
         }
     }
 }
@@ -75,13 +81,15 @@ fn Route2(cx: Scope) -> Element {
     render! {
         div {
             "Route2"
+        }
+        div {
             "{signal}"
         }
         button {
             onclick: move |_| {
                 *signal.write() += 2;
             },
-            "Increment"
+            "Increment2"
         }
     }
 }

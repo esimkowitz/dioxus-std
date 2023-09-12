@@ -16,7 +16,7 @@ categories = ["multimedia", "os", "wasm"]
 #members = ["./examples/*"]
 
 [features]
-cached_signal = [
+cached_states = [
     "dep:serde",
     "dep:serde_json",
     "dep:once_cell",
@@ -43,10 +43,10 @@ all = [
     "color_scheme",
     "utils",
     "i18n",
-    "cached_signal",
+    "cached_states",
     "browser_storage",
 ]
-default = ["cached_signal"]
+default = ["cached_states"]
 
 # CI testing
 wasm-testing = ["geolocation", "color_scheme", "utils", "i18n"]
