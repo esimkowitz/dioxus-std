@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
-use dioxus_std::cached_signal::use_cached_signal;
+use dioxus_std::cached_states::use_cached_state;
 use std::env;
 
 fn main() {
@@ -54,7 +54,7 @@ fn Index(cx: Scope) -> Element {
 
 #[allow(non_snake_case)]
 fn Route1(cx: Scope) -> Element {
-    let mut signal = use_cached_signal(cx, || 0);
+    let mut signal = use_cached_state(cx, || 0);
     render! {
         div {
             "Route1"
@@ -62,7 +62,7 @@ fn Route1(cx: Scope) -> Element {
         }
         button {
             onclick: move |_| {
-                *signal.write() += 1;
+                signal.set(signal.get() + 1);
             },
             "Increment"
         }
@@ -71,7 +71,7 @@ fn Route1(cx: Scope) -> Element {
 
 #[allow(non_snake_case)]
 fn Route2(cx: Scope) -> Element {
-    let mut signal = use_cached_signal(cx, || 0);
+    let mut signal = use_cached_state(cx, || 0);
     render! {
         div {
             "Route2"
@@ -79,7 +79,7 @@ fn Route2(cx: Scope) -> Element {
         }
         button {
             onclick: move |_| {
-                *signal.write() += 2;
+                signal.set(signal.get() + 2);
             },
             "Increment"
         }

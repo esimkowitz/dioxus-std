@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-dioxus-std = { path="../../", features = ["cached_signal"] }
+dioxus-std = { path="../../", features = ["cached_states"] }
 dioxus = "0.4"
 dioxus-router = "0.4.0"
 dioxus-desktop = "0.4"
