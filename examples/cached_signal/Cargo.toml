@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 dioxus-std = { path="../../", features = ["cached_states"] }
-dioxus = "0.4"
-dioxus-router = "0.4.0"
-dioxus-desktop = "0.4"
+dioxus = { git = "https://github.com/DioxusLabs/dioxus.git", rev = "1ba6ca39e3f4d4fcd3b4e75e3a739d8c35514e5b" }
+dioxus-router = { git = "https://github.com/DioxusLabs/dioxus.git", rev = "1ba6ca39e3f4d4fcd3b4e75e3a739d8c35514e5b" }
+dioxus-desktop = { git = "https://github.com/DioxusLabs/dioxus.git", rev = "1ba6ca39e3f4d4fcd3b4e75e3a739d8c35514e5b" }
 dioxus-signals = { git = "https://github.com/DioxusLabs/dioxus.git", rev = "1ba6ca39e3f4d4fcd3b4e75e3a739d8c35514e5b", features = [
     "serialize",
 ] }

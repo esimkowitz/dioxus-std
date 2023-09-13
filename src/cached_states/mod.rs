@@ -11,7 +11,9 @@ pub fn use_cached_signal<T: 'static + Serialize + DeserializeOwned>(
     cx: &ScopeState,
     f: impl FnOnce() -> T,
 ) -> Signal<T> {
-    let key = format!("signal-{}{}", cx.scope_id().0, &std::any::type_name::<T>());
+    let scope_name = cx.name();
+    let key = format!("signal-{}{}", scope_name, &std::any::type_name::<T>());
+    log::info!("Key: {}", key);
     let hook = *cx.use_hook(|| {
         if let Some(signal) = SIGNAL_CACHE.lock().unwrap().get(&key.clone()) {
             if let Ok(signal) = serde_json::from_str::<Signal<T>>(signal) {
