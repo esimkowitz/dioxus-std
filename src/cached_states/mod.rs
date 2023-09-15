@@ -3,18 +3,23 @@ use dioxus_router::prelude::*;
 use dioxus_signals::Signal;
 use once_cell::sync::Lazy;
 use serde::{de::DeserializeOwned, Serialize};
-use std::{vec::Vec, sync::{atomic::{AtomicUsize, Ordering::SeqCst}, Mutex}, panic, any::Any};
+use std::{vec::Vec, sync::{atomic::{AtomicUsize, Ordering::SeqCst}, Mutex}, panic, any::Any, collections::HashMap, hash::Hash};
 
-static SIGNAL_STACK: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+static SIGNAL_STACK_MAP: Lazy<Mutex<HashMap<String, SignalStack>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
-static SIGNAL_STACK_CURSOR: Lazy<Mutex<usize>> = Lazy::new(|| Mutex::new(0));
+struct SignalStack {
+    stack: Vec<String>,
+    cursor: usize,
+}
+
+fn get_map_key(cx: &ScopeState) -> String {
+    format!("{}-{}", cx.name(), cx.height())
+}
 
 pub fn use_cached_signal<T: 'static + Serialize + DeserializeOwned>(
     cx: &ScopeState,
     f: impl FnOnce() -> T,
 ) -> Signal<T> {
-    log::info!("Scope ID: {}, Scope generation: {}", cx.scope_id().0, cx.generation());
-    log::info!("Signal stack size before: {}", SIGNAL_STACK.lock().unwrap().len());
     let hook = *cx.use_hook(|| {
         let mut signal_stack = SIGNAL_STACK.lock().unwrap();
         let mut cursor = SIGNAL_STACK_CURSOR.lock().unwrap();
