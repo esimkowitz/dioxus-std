@@ -22,9 +22,8 @@ use web_sys::{window, Storage};
 
 use crate::storage::storage::{
     serde_from_string, serde_to_string, storage_entry, try_serde_from_string,
-    use_synced_storage_entry, StorageBacking, StorageEntry, StorageEntryMut, StorageSender, do_storage_backing_subscribe, StorageChannelPayload, StorageBackingSubscriptions,
+    use_synced_storage_entry, StorageBacking, StorageEntry, StorageEntryMut,
 };
-use crate::utils::channel::UseChannel;
 
 fn local_storage() -> Option<Storage> {
     window()?.local_storage().ok()?
@@ -54,17 +53,18 @@ pub struct ClientStorage;
 impl StorageBacking for ClientStorage {
     type Key = String;
 
-    fn subscribe<T: DeserializeOwned + 'static>(cx: &ScopeState, key: &Self::Key) -> Option<UseChannel<StorageChannelPayload>> {
-        let channel = do_storage_backing_subscribe::<Self, T>(cx, key);
-        let subscriptions = cx.consume_context::<StorageBackingSubscriptions<ClientStorage>>().unwrap();
-        let closure = cx.provide_root_context::<Rc<Closure::<dyn FnMut(web_sys::StorageEvent)>>>(Rc::new(Closure::<dyn FnMut(web_sys::StorageEvent)>::new(|e: web_sys::StorageEvent| {
-            process_storage_event(subscriptions, e);
-        })));
+    fn use_onchange<T: DeserializeOwned + 'static>(_: &ScopeState, key: String, action: impl Fn() + 'static) {
+        let closure = Closure::<dyn FnMut(web_sys::StorageEvent)>::new(move |e: web_sys::StorageEvent| {
+            let event_key = e.key().unwrap();
+            log::info!("Incoming storage event key: {}", event_key);
+            if event_key == key {
+                action();
+            }
+        });
         window()
             .unwrap()
-            .add_event_listener_with_callback("storage", closure.deref().as_ref().unchecked_ref())
+            .add_event_listener_with_callback("storage", closure.as_ref().unchecked_ref())
             .unwrap();
-        channel
     }
 
     fn set<T: Serialize>(key: String, value: &T) {
@@ -73,13 +73,5 @@ impl StorageBacking for ClientStorage {
 
     fn get<T: DeserializeOwned>(key: &String) -> Option<T> {
         get(key)
-    }
-}
-
-fn process_storage_event(subscriptions: StorageBackingSubscriptions<ClientStorage>, e: web_sys::StorageEvent) {
-    log::info!("Incoming storage event");
-    let key = e.key().unwrap();
-    if let Some(storage_sender) = subscriptions.get(&key) {
-        storage_sender.channel.send(StorageChannelPayload::Updated);
     }
 }
